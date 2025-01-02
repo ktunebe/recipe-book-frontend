@@ -1,6 +1,8 @@
-import './App.css'
+import './App.css';
 import { useState, useEffect } from 'react';
 import axiosInstance from './api/axios';
+import RecipeList from './RecipeList';
+import Header from './Header';
 
 function App() {
   const [recipes, setRecipes] = useState([]);
@@ -19,15 +21,11 @@ function App() {
   }, []);
 
   return (
-    <div>
+    <>
       <h1>Recipes</h1>
-      <ul>
-        {recipes.map((recipe) => (
-          <li key={recipe.id}>{recipe.title}</li>
-        ))}
-      </ul>
-    </div>
+      <RecipeList recipes={recipes} />
+    </>
   );
 }
 
-export default App
+export default App;
