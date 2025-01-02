@@ -13,17 +13,17 @@ function Recipe() {
         const response = await axiosInstance.get(`/recipes/${id}`); // Adjust the endpoint as needed
         const recipeData = response.data;
 
-        // Fetch ingredients for the recipe
-        const fetchIngredients = async (ingredientId) => {
+        // Fetch ingredient object for the recipe
+        const fetchIngredient = async (ingredientId) => {
           const ingredientResponse = await axiosInstance.get(`/ingredients/${ingredientId}`);
-          return ingredientResponse.data.name;
+          return ingredientResponse.data;
         };
 
-        // Assign ingredient names to each ingredientInstance
+        // Assign ingredient objects to each ingredientInstance
         const updatedIngredientList = await Promise.all(
           recipeData.ingredientList.map(async (ingredientInstance) => {
-            const ingredientName = await fetchIngredients(ingredientInstance.ingredientId);
-            return { ...ingredientInstance, ingredientName };
+            const ingredient = await fetchIngredient(ingredientInstance.ingredientId);
+            return { ...ingredientInstance, ingredient };
           })
         );
 
@@ -43,11 +43,18 @@ function Recipe() {
   return (
     <div>
       <h1>{recipe.title}</h1>
-      <ul>
-        {recipe.ingredientList.map((ingredientInstance) => (
-          <Ingredient key={`${recipe.id}-${ingredientInstance.ingredientId}`} ingredientInstance={ingredientInstance} />
-        ))}
-      </ul>
+      <h2 className='text-3xl text-red-500 my-4'>Ingredients</h2>
+        <ul className='text-left'>
+          {recipe.ingredientList.map((ingredientInstance, index) => (
+            <Ingredient key={`${recipe.id}-${index}`} ingredientInstance={ingredientInstance} />
+          ))}
+        </ul>
+      <h2 className='text-3xl text-red-500 my-4'>Instructions</h2>
+        <ol className='list-decimal list-inside text-left'>
+          {recipe.instructions.map((instruction, index) => (
+            <li key={`${recipe.id}-${index}`} className='my-2 text-wrap'>{instruction}</li>
+          ))}
+        </ol>
     </div>
   );
 }
