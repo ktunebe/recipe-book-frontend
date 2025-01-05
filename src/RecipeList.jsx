@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 function RecipeList({ recipes }) {
   const salads = [];
   const appetizers = [];
+  const soups = []
 
   recipes.forEach((recipe) => {
     switch (recipe.category) {
@@ -13,6 +14,8 @@ function RecipeList({ recipes }) {
       case 'appetizer':
         appetizers.push(recipe);
         break;
+      case 'soup':
+        soups.push(recipe)
       default:
         break;
     }
@@ -35,6 +38,18 @@ function RecipeList({ recipes }) {
       <h2>Appetizers</h2>
       <ul>
         {appetizers.map((recipe) => {
+          // const recipeId = recipe._id.toString(); // Ensure recipeId is correctly defined
+          return (
+            <li key={recipe.id}>
+              <Link to={`/recipes/${recipe.id}`}>{recipe.title}</Link>
+            </li>
+          );
+        })}
+      </ul>
+
+      <h2>Soups</h2>
+      <ul>
+        {soups.map((recipe) => {
           // const recipeId = recipe._id.toString(); // Ensure recipeId is correctly defined
           return (
             <li key={recipe.id}>

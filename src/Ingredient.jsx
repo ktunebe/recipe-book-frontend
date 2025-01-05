@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import IngredientPopup from './IngredientPopup';
+import { fractify } from './utils/fractify';
 
 function Ingredient({ ingredientInstance }) {
   const [isChecked, setIsChecked] = useState(false);
@@ -23,6 +24,8 @@ function Ingredient({ ingredientInstance }) {
     setIsPopupVisible(!isPopupVisible); // Show popup when span is clicked
   };
 
+  const { whole, fraction } = fractify(ingredientInstance.quantity);
+
   return (
     <li key={ingredientInstance.ingredientId} className='flex items-center my-2'>
       <input
@@ -32,8 +35,14 @@ function Ingredient({ ingredientInstance }) {
         onChange={handleCheckboxChange}
       />
       <div className={`ml-2 ${isChecked ? 'italic text-gray-500' : ''}`}>
-        {ingredientInstance.quantity ? `${ingredientInstance.quantity} ` : ''}
+      {ingredientInstance.quantity ? (
+          <>
+            {whole !== 0 && `${whole} `}
+            {`${fraction} `}
+          </>
+        ) : ''}
         {ingredientInstance.measurement ? `${ingredientInstance.measurement} ` : ''}
+        {ingredientInstance.additionalInfo ? `${ingredientInstance.additionalInfo} ` : ''}
         <span
           onClick={handleSpanClick}
           onMouseEnter={handleMouseEnter}
