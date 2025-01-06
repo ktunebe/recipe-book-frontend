@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import IngredientPopup from './IngredientPopup';
 import { fractify } from './utils/fractify';
+import { pluralize } from './utils/pluralize';
+import { capitalize } from './utils/capitalize';
 
 function Ingredient({ ingredientInstance }) {
   const [isChecked, setIsChecked] = useState(false);
@@ -24,10 +26,13 @@ function Ingredient({ ingredientInstance }) {
     setIsPopupVisible(!isPopupVisible); // Show popup when span is clicked
   };
 
-  const { whole, fraction } = fractify(ingredientInstance.quantity);
+  const { ingredientId, ingredientName, quantity, measurement, additionalInfo, prepMethod, ingredient } = ingredientInstance;
+  const { whole, fraction } = fractify(quantity);
+
+  // ingredientInstance.quantity *= 2
 
   return (
-    <li key={ingredientInstance.ingredientId} className='flex items-center my-2'>
+    <li key={ingredientId} className='flex items-center my-2'>
       <input
         type="checkbox"
         className="checkbox"
@@ -35,33 +40,37 @@ function Ingredient({ ingredientInstance }) {
         onChange={handleCheckboxChange}
       />
       <div className={`ml-2 ${isChecked ? 'italic text-gray-500' : ''}`}>
-      {ingredientInstance.quantity ? (
+      {quantity ? (
           <>
             {whole !== 0 && `${whole} `}
             {`${fraction} `}
           </>
         ) : ''}
-        {ingredientInstance.measurement ? `${ingredientInstance.measurement} ` : ''}
-        {ingredientInstance.additionalInfo ? `${ingredientInstance.additionalInfo} ` : ''}
+        {measurement ? 
+          `${quantity > 1  ? `${pluralize(measurement)} ` : `${measurement} `}` 
+          : ''}
+        {additionalInfo ? `${additionalInfo} ` : ''}
         <span
           onClick={handleSpanClick}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          className='relative cursor-help underline decoration-dotted decoration-1 underline-offset-3'
+          className='relative cursor-help underline decoration-dotted decoration-1 underline-offset-4'
         >
-          {ingredientInstance.ingredientName || 'Loading...'}
+          {quantity || measurement || additionalInfo
+            ? `${quantity > 1 && !measurement ? pluralize(ingredientName) : ingredientName}`
+            : capitalize(ingredientName) || 'Loading...'}
           {isPopupVisible && (
             <div
               className='absolute bottom-1 left-0 z-10 text-red-500 border-8 border-transparent p-4 shadow-md w-auto whitespace-nowrap'
             >
               <IngredientPopup
-                name={ingredientInstance.ingredientName}
-                description={ingredientInstance.ingredient.description}
+                name={ingredientName}
+                description={ingredient.description}
               />
             </div>
           )}
         </span>
-        {ingredientInstance.prepMethod ? `, ${ingredientInstance.prepMethod}` : ''}
+        {prepMethod ? `, ${prepMethod}` : ''}
       </div>
     </li>
   );
