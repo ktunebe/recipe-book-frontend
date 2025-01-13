@@ -5,8 +5,8 @@ function IngredientPopup({ name, description }) {
 
   return (
     <>
-    <div className='bg-white p-2'>
-      <p className=''>{description}</p>
+    <div className='bg-white p-2 w-[75vw] md:w-[50vw] xl:w-[30vw]'>
+      <p className='text-wrap'>{description}</p>
       <a href={shopURL} target='_blank' className='hover:underline'>Shop for {name}</a>
     </div>
     </>
