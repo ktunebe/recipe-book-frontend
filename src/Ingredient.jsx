@@ -35,7 +35,7 @@ function Ingredient({ ingredientInstance }) {
     <li key={ingredientId} className='flex items-center my-2'>
       <input
         type="checkbox"
-        className="checkbox"
+        className="checkbox border-black border-2"
         checked={isChecked}
         onChange={handleCheckboxChange}
       />

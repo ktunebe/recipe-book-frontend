@@ -48,48 +48,64 @@ function Recipe() {
 		fetchRecipe()
 	}, [id])
 
-	useEffect(() => {
-		if (recipe) {
-			const updatedIngredientList = recipe.ingredientList.map(
-				(ingredientInstance) => {
-					const { quantity } = ingredientInstance
-					const updatedQuantity = quantity * recipeMultiplier
-					return { ...ingredientInstance, quantity: updatedQuantity }
-				}
-			)
-
-			setRecipe({ ...recipe, ingredientList: updatedIngredientList })
-		}
-	}, [recipeMultiplier])
-
 	const handleMultiplierChange = (event) => {
-		setRecipeMultiplier(event.target.value)
+		setRecipeMultiplier(Number(event.target.value))
 	}
 
 	if (!recipe) {
 		return <div>Loading...</div>
 	}
 
+	const scaledIngredientList = recipe.ingredientList.map(
+		(ingredientInstance) => {
+			const { quantity } = ingredientInstance
+
+			// Handle optional quantities (like "to taste")
+			if (quantity == null) return ingredientInstance
+
+			return {
+				...ingredientInstance,
+				quantity: quantity * recipeMultiplier,
+			}
+		}
+	)
+
 	return (
-		<div>
+		<div m-0>
 			<h1>{recipe.title}</h1>
-			<label htmlFor="recipeMultiplier">Serves: </label>
-      <select name="multiplier" onChange={handleMultiplierChange}>
-      <option value='1'>Standard Recipe</option>
-        {multiplierObjects.map((multiplierObject, index) => (
-          <option key={index} value={multiplierObject.num}>{multiplierObject.string}</option>
-        ))}
-			</select>
-			<h2 className="text-3xl text-red-500 my-4">Ingredients</h2>
-			<ul className="text-left">
-				{recipe.ingredientList.map((ingredientInstance, index) => (
-					<Ingredient
-						key={`${recipe.id}-${index}`}
-						ingredientInstance={ingredientInstance}
-					/>
-				))}
-			</ul>
-			<h2 className="text-3xl text-red-500 my-4">Instructions</h2>
+			<img
+				src={recipe.imagePath || '/images/recipes/default.jpg'}
+				alt={recipe.title}
+				className="w-1/3 h-auto max-w-md my-8 mx-auto rounded-lg"
+			/>
+
+			<div className='my-4'>
+				<label htmlFor="recipeMultiplier" >Recipe Size: </label>
+				<select
+					name="multiplier"
+					value={recipeMultiplier}
+					onChange={handleMultiplierChange}
+					className='px-1 py-0.5 rounded-xl'>
+					{multiplierObjects.map((multiplierObject, index) => (
+						<option key={index} value={multiplierObject.num}>
+							{multiplierObject.string}
+						</option>
+					))}
+				</select>
+			</div>
+			<div className='bg-stone-200 bg-opacity-75 mx-auto p-4 rounded-xl lg:w-1/2 md:w-2/3 w-5/6 mb-8'>
+				<h2 className="text-3xl mb-4">Ingredients</h2>
+				<ul className="text-left">
+					{scaledIngredientList.map((ingredientInstance, index) => (
+						<Ingredient
+							key={`${recipe.id}-${index}`}
+							ingredientInstance={ingredientInstance}
+						/>
+					))}
+				</ul>
+			</div>
+			<div className='bg-stone-200 bg-opacity-75 mx-auto p-4 rounded-xl lg:w-1/2 md:w-2/3 w-5/6'>
+			<h2 className="text-3xl my-4">Instructions</h2>
 			<ol className="list-decimal list-inside text-left">
 				{recipe.instructions.map((instruction, index) => (
 					<li key={`${recipe.id}-${index}`} className="my-2 text-wrap">
@@ -97,6 +113,7 @@ function Recipe() {
 					</li>
 				))}
 			</ol>
+		</div>
 		</div>
 	)
 }
